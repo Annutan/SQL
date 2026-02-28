@@ -1,0 +1,41 @@
+/* Создать архив удаляемых книг перед удалением */
+
+-- 📦 ШАГ 1: Создаем таблицу-архив для удаляемых книг
+CREATE TABLE IF NOT EXISTS book_archive (
+    archive_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
+    author_name VARCHAR(255),
+    price DECIMAL(8,2),
+    amount INT,
+    archive_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 📥 ШАГ 2: Архивируем книги, которых нет в таблице supply
+INSERT INTO book_archive (title, author_name, price, amount)
+SELECT
+    b.title,
+    a.name_author,
+    b.price,
+    b.amount
+FROM
+    book b
+    INNER JOIN author a ON b.author_id = a.author_id
+WHERE
+    (b.title, a.name_author) NOT IN (
+        SELECT title, author FROM supply
+    );
+
+-- 🗑️ ШАГ 3: Удаляем книги, которых нет в supply
+DELETE b FROM book b
+INNER JOIN author a ON b.author_id = a.author_id
+LEFT JOIN supply s ON b.title = s.title AND a.name_author = s.author
+WHERE s.supply_id IS NULL;
+
+-- 👀 ШАГ 4: Проверяем содержимое архива
+SELECT * FROM book_archive;
+
+-- 📊 ШАГ 5: Проверяем оставшиеся книги в book
+SELECT * FROM book;
+
+-- 🔍 ШАГ 6: Проверяем исходные данные в supply
+SELECT * FROM supply;

@@ -1,0 +1,14 @@
+DELETE FROM genre
+WHERE genre_id IN (
+    SELECT genre_id FROM (
+        SELECT g.genre_id
+        FROM genre g
+        LEFT JOIN book b ON g.genre_id = b.genre_id
+        GROUP BY g.genre_id
+        HAVING COUNT(b.book_id) < 4
+    ) AS temp
+);
+
+SELECT * FROM genre;
+
+SELECT * FROM book;

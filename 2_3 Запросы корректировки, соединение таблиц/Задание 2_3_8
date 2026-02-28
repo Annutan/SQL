@@ -1,0 +1,14 @@
+-- Удаляем авторов, которые пишут в жанре "Поэзия"
+DELETE FROM author
+WHERE author_id IN (
+    SELECT author_id
+    FROM book
+    INNER JOIN genre ON book.genre_id = genre.genre_id
+    WHERE genre.name_genre = 'Поэзия'
+);
+
+SELECT * FROM genre;
+
+SELECT * FROM author;
+
+SELECT * FROM book;

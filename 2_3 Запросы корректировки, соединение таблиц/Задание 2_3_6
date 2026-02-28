@@ -1,0 +1,16 @@
+DELETE FROM author
+WHERE author_id IN (
+    SELECT author_id FROM (
+        SELECT a.author_id
+        FROM
+            author a
+            LEFT JOIN book b
+            ON a.author_id = b.author_id
+        GROUP BY a.author_id
+        HAVING COALESCE(SUM(b.amount), 0) < 20
+        ) AS temp_table
+    );
+
+SELECT * FROM author;
+
+SELECT * FROM book;
