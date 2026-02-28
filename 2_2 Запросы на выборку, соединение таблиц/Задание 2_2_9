@@ -1,0 +1,7 @@
+SELECT
+    book.title AS Название,
+    supply.author AS Автор,
+    book.amount + supply.amount AS Количество
+FROM
+    supply INNER JOIN book
+    USING (title, price);

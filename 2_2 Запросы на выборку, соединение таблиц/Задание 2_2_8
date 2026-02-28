@@ -1,0 +1,29 @@
+SELECT
+    b.title,
+    a.name_author,
+    g.name_genre,
+    b.price,
+    b.amount
+FROM
+    -- Выбираем книги этих жанров с информацией об авторе и жанре
+    book b
+    INNER JOIN author a ON b.author_id = a.author_id
+    INNER JOIN genre g ON b.genre_id = g.genre_id
+WHERE
+    b.genre_id IN (
+        -- Находим жанр(ы) с максимальным общим количеством книг
+        SELECT genre_id
+        FROM book
+        GROUP BY genre_id
+        HAVING SUM(amount) = (
+            -- Находим максимальное общее количество книг в жанре
+            SELECT MAX(total_amount)
+            FROM (
+                SELECT SUM(amount) AS total_amount
+                FROM book
+                GROUP BY genre_id
+            ) genre_totals
+        )
+    )
+ORDER BY
+    b.title;

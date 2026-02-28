@@ -1,0 +1,12 @@
+SELECT a.name_author
+FROM
+    author a /* получение имен авторов путем соединения таблиц */
+    JOIN (
+         /* список `author_id` авторов, которые пишут только в одном жанре */
+         SELECT author_id
+         FROM book
+         GROUP BY author_id
+         HAVING COUNT(DISTINCT genre_id) = 1
+         ) single_genre_authors
+    ON a.author_id = single_genre_authors.author_id
+ORDER BY a.name_author; -- сортировка
