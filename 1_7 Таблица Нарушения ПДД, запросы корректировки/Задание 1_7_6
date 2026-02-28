@@ -1,0 +1,15 @@
+UPDATE fine f, (
+    SELECT name, number_plate, violation
+    FROM fine
+    GROUP BY name, number_plate, violation
+    HAVING COUNT(*) >= 2
+    ORDER BY name, number_plate, violation
+    ) AS query_in
+SET f.sum_fine = f.sum_fine * 2
+WHERE date_payment IS NULL AND f.number_plate = query_in.number_plate AND f.violation = query_in.violation AND f.name = query_in.name;
+
+SELECT * FROM fine;
+
+
+
+
